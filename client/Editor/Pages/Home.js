@@ -6,11 +6,8 @@ import "../Text Editor/Client/styles.css";
 import { firestore } from "../../Config/firebase";
 import {
   addDoc,
-  //   getDocs,
   collection,
   serverTimestamp,
-  //   query,
-  //   orderBy,
   onSnapshot,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -18,54 +15,53 @@ import Modal from './Modal';
 import DocRow from '../Components/DocRow';
 
 const Home = () => {
+  const [showModel, setShoModel] = useState(false);
+  const [input, setInput] = useState("");
+  const [userDoc, setUserDoc] = useState([]); //Document array
+  const navigate = useNavigate();
 
-          const [showModel, setShoModel] = useState(false);
-          const [input, setInput] = useState("");
-          const [userDoc, setUserDoc] = useState([]);
-          const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-          const { user } = useContext(AuthContext);
+  //   if (user === null) history.push("/login");
 
-        //   if (user === null) history.push("/login");
+  //To create a new document
+  const createDoc = async () => {
+    // console.log("I'm here");
+    if (!input) return;
+    setInput("");
+    setShoModel(false);
 
-        const createDoc = async () => {
-            console.log("Im here");
-          if (!input) return;
-          setInput("");
-          setShoModel(false);
+    const docRef = await addDoc(
+      collection(firestore, "userDocs", `${user?.uid}`, "docs"),
+      {
+        name: `${input}`,
+        time: serverTimestamp(),
+      }
+    );
+    //   history.push(`/doc/${docRef?.id}`);
+    navigate(`/Editor/${docRef?.id}`);
+  };
 
-          const docRef = await addDoc(
-            collection(firestore, "userDocs", `${user?.uid}`, "docs"),
-            {
-              name: `${input}`,
-              time: serverTimestamp(),
-            }
-          );
-        //   history.push(`/doc/${docRef?.id}`);
-          navigate(`/Editor/${docRef?.id}`);
-        };
+  const closeModal = () => {
+    setShoModel(false);
+  };
 
-          const closeModal = () => {
-            setShoModel(false);
-          };
-
-
-        useEffect(() => {
-          const unsub = onSnapshot(
-            collection(firestore, "userDocs", `${user?.uid}`, "docs"),
-            (snap) => {
-              setUserDoc(
-                snap.docs?.map((doc) => ({
-                  id: doc?.id,
-                  ...doc.data(),
-                }))
-              );
-            }
-          );
-          return () => unsub();
-        }, [user?.uid]);
-
-
+  //It updates the documents(userDoc) with the latest data from the Firestore collection.
+  useEffect(() => {
+    //onSnapshot provides a way to listen to real-time changes in a Firestore collection.
+    const unsub = onSnapshot(
+      collection(firestore, "userDocs", `${user?.uid}`, "docs"),
+      (snap) => {
+        setUserDoc(
+          snap.docs?.map((doc) => ({
+            id: doc?.id,
+            ...doc.data(),
+          }))
+        );
+      }
+    );
+    return () => unsub();
+  }, [user?.uid]);
 
   return (
     <div>
@@ -84,7 +80,7 @@ const Home = () => {
         </Link> */}
 
         {/* {model} */}
- 
+
         <section
           style={{ background: "#f8f9fa" }}
           className="bg-[#f8f9fa] p-2 w-full mx-auto md:pb-10 md:px-10 "
@@ -98,8 +94,7 @@ const Home = () => {
                 buttonType="outline"
                 iconOnly={true}
                 className="border-0"
-              >
-              </button>
+              ></button>
             </div>
             <div className="flex justify-center">
               <div
@@ -129,6 +124,7 @@ const Home = () => {
           )}
         </>
 
+        {/* List of documents of particular users */}
         <section className="bg-white w-full md:px-10 md:mb-20">
           <div className="max-w-3xl mx-auto py-8 text-sm text-gray-700">
             <div className="flex p-4 items-center justify-between">
