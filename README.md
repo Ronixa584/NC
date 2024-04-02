@@ -1,6 +1,6 @@
 # NoteCraft
 
-NoteCraft is a project built with the aim of facilitating efficient data organization and providing a versatile rich text editor for real time collaboration.
+NoteCraft is a project built with the aim of facilitating Real Time Collaboration in text editor and data organization.
 
 ## Features
 
