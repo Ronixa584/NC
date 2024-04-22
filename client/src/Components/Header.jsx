@@ -10,6 +10,7 @@ import useAuth from "../utils/useAuth";
 import { signOut } from "@firebase/auth";
 import { useContext } from "react";
 import { AuthContext } from "../Editor/Context/firebase";
+import { ToastContainer, toast } from "react-toastify";
 
 const Header = () => {
   const { isLoggedIn, userName, login, logout } = useAuth();
@@ -17,6 +18,8 @@ const Header = () => {
   const { user, setUser } = useContext(AuthContext);
   
   console.log(user);
+
+  const notify = () => toast.success("SignIn Please!!");
 
   return (
     <header
@@ -35,27 +38,64 @@ const Header = () => {
               </span>
             </li>
           </Link>
-          <Link to="/Editor">
-            <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
-              <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
-                Editor
-              </span>
-            </li>
-          </Link>
-          <Link to="/VideoTranscription">
-            <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
-              <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
-                Transcribe
-              </span>
-            </li>
-          </Link>
-          <Link to="/OCR">
-            <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
-              <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
-                OCR
-              </span>
-            </li>
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link to="/Editor">
+                <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    Editor
+                  </span>
+                </li>
+              </Link>
+              <Link to="/VideoTranscription">
+                <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    Transcribe
+                  </span>
+                </li>
+              </Link>
+              <Link to="/OCR">
+                <li className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer">
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    OCR
+                  </span>
+                </li>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/">
+                <li
+                  onClick={notify}
+                  className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer"
+                >
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    Editor
+                  </span>
+                </li>
+              </Link>
+              <Link to="/">
+                <li
+                  onClick={notify}
+                  className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer"
+                >
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    Transcribe
+                  </span>
+                </li>
+              </Link>
+              <Link to="/">
+                <li
+                  onClick={notify}
+                  className="group transition-all duration-300 ease-in-out text-white flex items-center justify-center text-xl mx-3 cursor-pointer"
+                >
+                  <span class="bg-left-bottom bg-gradient-to-r  from-teal-400 to-purple-600 bg-[length:0%_3px] bg-no-repeat group-hover:bg-[length:100%_3px] transition-all duration-500 ease-out">
+                    OCR
+                  </span>
+                </li>
+              </Link>
+            </>
+          )}
         </ul>
       </div>
       {/* <div> */}

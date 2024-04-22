@@ -7,13 +7,13 @@ import App from "./Text Editor/Client/TextEditor";
 
 const Editor = () => {
   return (
-    <div>
-      <Home/>
+    <div className="h-screen">
+      <Home />
       {/* <SlateEditor/> */}
       {/* <CollaborativeEditor/> */}
       {/* <App/> */}
     </div>
-  )
+  );
 }
 
 export default Editor

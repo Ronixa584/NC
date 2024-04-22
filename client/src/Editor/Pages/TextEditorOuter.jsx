@@ -39,6 +39,8 @@ const TextEditorOuter = () => {
   // const isCollaborativeEditing = id.includes("(CE)");
   const isCollaborativeEditing = Url.includes("(CE)");
 
+  console.log("IM hereat Outer" + isCollaborativeEditing);
+
   //This component is designed to fetch and display data for a specific document that has already been created in Firestore
   useEffect(() => {
     const getUerDoc = async () => {
@@ -55,6 +57,21 @@ const TextEditorOuter = () => {
       // navigate("/");
     };
     getUerDoc();
+
+        const getUerDoc1 = async () => {
+          const docRef = doc(
+            firestore,
+            "userDocs",
+            "CollabEdit",
+            "docs",
+            `${id}`
+          );
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) setUserDoc(docSnap.data());
+          // else history.push("/");
+          // navigate("/");
+        };
+        getUerDoc1();
   }, [id, user?.uid, navigate]);
 
   console.log("Document ID:", isCollaborativeEditing);
@@ -68,9 +85,9 @@ const TextEditorOuter = () => {
       {/* <App uid={user?.uid} id={id} /> */}
 
       {isCollaborativeEditing ? (
-        <App uid={user?.uid} id={lastPart} /> // Render CE component if id contains "CE"
+        <App uid={user?.uid} id={lastPart} isCE={isCollaborativeEditing} /> // Render CE component if id contains "CE"
       ) : (
-        <App uid={user?.uid} id={id} /> // Render normal editor component otherwise
+        <App uid={user?.uid} id={id} isCE={isCollaborativeEditing} /> // Render normal editor component otherwise
       )}
     </div>
   );

@@ -201,11 +201,15 @@ import {
   collection,
   serverTimestamp,
   onSnapshot,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Modal2 from "./Modal2";
 import DocRow from "../Components/DocRow";
+import { ToastContainer, toast } from "react-toastify";
 
 const Home = () => {
   const [showModel, setShowModel] = useState(false);
@@ -223,6 +227,18 @@ const Home = () => {
     setInput("");
     setShowModel(false);
 
+    // Check if a document with the same name already exists
+    const q = query(
+      collection(firestore, "userDocs", `${user?.uid}`, "docs"),
+      where("name", "==", input)
+    );
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      // If a document with the same name exists, show a toast
+      toast.error("A document with the same name already exists!");
+      return;
+    }
+
     const docRef = await addDoc(
       collection(firestore, "userDocs", `${user?.uid}`, "docs"),
       {
@@ -231,13 +247,27 @@ const Home = () => {
       }
     );
     navigate(`/Editor/${docRef?.id}`);
+
+    toast.success("Document Created Successfully! Wait for few seconds!");
   };
 
     const createDoc2 = async () => {
       if (!input2) return;
       setInput2("");
-      setShowModal2(false); 
-      
+      setShowModal2(false);
+
+      // Check if a document with the same name already exists
+      const q = query(
+        collection(firestore, "userDocs", "CollabEdit", "docs"),
+        where("name", "==", input2 + "(CE)")
+      );
+
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        // If a document with the same name exists, show a toast
+        toast.error("A room with the same name already exists!");
+        return;
+      }
 
       const docRef = await addDoc(
         collection(firestore, "userDocs", "CollabEdit", "docs"),
@@ -247,6 +277,7 @@ const Home = () => {
         }
       );
       navigate(`/Editor(CE)/${docRef?.id}/${input2}(CE)`);
+      toast.success("Created a Room! Wait for few seconds!");
     };
 
   const closeModal = () => {
@@ -347,26 +378,49 @@ const Home = () => {
     // navigate(`/Editor/${roomName}/${roomDocRef.id}`);
   };
 
-    const joinRoom = () => {
-      // Your logic for joining a room goes here
-      console.log("Joined room!");
-      // For example, you can navigate to the collaborative editor
-      // navigate("/Editor(CE)/${id}/${fileName}");
-      navigate(`/Editor(CE)/${userDoc2?.id}/${input3}(CE)`);
+  const joinRoom = async () => {
+    // Check if a document with the same name already exists
+    const q = query(
+      collection(firestore, "userDocs", "CollabEdit", "docs"),
+      where("name", "==", input3 + "(CE)")
+    );
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      // If a document with the same name exists, show a toast
+     toast.error(`No room with the name '${input3}'. Please create it!`);
+
+      return;
+    }
+
+    // Your logic for joining a room goes here
+    //console.log("Joined room!");
+    // For example, you can navigate to the collaborative editor
+    // navigate("/Editor(CE)/${id}/${fileName}");
+    navigate(`/Editor(CE)/${userDoc2?.id}/${input3}(CE)`);
+
+    toast.success("Joined Room! Wait for few seconds!");
   };
   
   return (
     <div>
       <div>
         <Header />
-        <div className="flex">
+        <div className="flex ">
           <section
-            style={{ background: "#f8f9fa" }}
+            // style={{ background: "#f8f9fa" }}
+            style={{
+              backgroundImage: `url('https://media.giphy.com/media/7AtHoQ9XWbpwLRxs0t/giphy.gif?cid=790b76115l82gy7vjntq24t3251squ0d1wr59nke2y41gqe6&ep=v1_gifs_search&rid=giphy.gif&ct=g')`, // Set the GIF as background image
+              backgroundSize: "cover", // Adjust background size as needed
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "white", // Example text color for better visibility
+            }}
             className="bg-[#f8f9fa] p-2 w-full mx-auto md:pb-10 md:px-10 "
           >
             <div className="max-w-3xl w-full mx-auto">
               <div className="py-6 flex items-center justify-center">
-                <h2 className="text-gray-700">Start a new document</h2>
+                <h2 className="text-gray-100">Start a new document</h2>
                 <button
                   color="gray"
                   ripple="dark"
@@ -387,12 +441,20 @@ const Home = () => {
           </section>
 
           <section
-            style={{ background: "#f8f9fa" }}
+            // style={{ background: "#f8f9fa" }}
+            style={{
+              backgroundImage: `url('https://media.giphy.com/media/7AtHoQ9XWbpwLRxs0t/giphy.gif?cid=790b76115l82gy7vjntq24t3251squ0d1wr59nke2y41gqe6&ep=v1_gifs_search&rid=giphy.gif&ct=g')`, // Set the GIF as background image
+              backgroundSize: "cover", // Adjust background size as needed
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "white", // Example text color for better visibility
+            }}
             className="bg-[#f8f9fa] p-2 w-full mx-auto md:pb-10 md:px-10 "
           >
             <div className="max-w-3xl w-full mx-auto">
               <div className="py-6 flex items-center justify-center">
-                <h2 className="text-gray-700">Collaborative Editing</h2>
+                <h2 className="text-gray-100">Collaborative Editing</h2>
                 <button
                   color="gray"
                   ripple="dark"
@@ -474,15 +536,17 @@ const Home = () => {
         />{" "} */}
         {/* Render Modal2 */}
         {/* Render Modal2 */}
-        <section className="bg-white w-full md:px-10 md:mb-20 pb-5">
-          <div className="max-w-3xl mx-auto py-8 text-sm text-gray-700">
+        <section className="bg-gradient-to-tr from-gray-900 via-purple-900 to-violet-600 h-screen w-full md:px-10 md:mb-20 pb-5">
+          <div className="max-w-3xl mx-auto py-8 text-sm text-white">
             <div className="flex p-4 items-center justify-between">
               <h2 className="font-medium flex-grow">My Document</h2>
-              <p className="mr-12">Date Created</p>
+              <p className="mr-12 font-medium ">Date Created</p>
             </div>
           </div>
           {userDoc.length === 0 ? (
-            <div className="w-full text-center py-5">No documents</div>
+            <div className=" text-white max-w-3xl mx-auto text-sm text-center py-5">
+              No documents
+            </div>
           ) : (
             ""
           )}
@@ -496,7 +560,8 @@ const Home = () => {
           ))}
         </section>
 
-        <section className="bg-white w-full md:px-10 md:mb-20">
+        {/* Collaborative editing documents */}
+        {/* <section className="bg-white w-full md:px-10 md:mb-20">
           <div className="max-w-3xl mx-auto py-8 text-sm text-gray-700">
             <div className="flex p-4 items-center justify-between">
               <h2 className="font-medium flex-grow">My Document</h2>
@@ -516,7 +581,7 @@ const Home = () => {
               date={doc?.time}
             />
           ))}
-        </section>
+        </section> */}
       </div>
     </div>
   );

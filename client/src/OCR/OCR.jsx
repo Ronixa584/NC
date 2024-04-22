@@ -4,9 +4,12 @@ import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import Tesseract from "tesseract.js";
 import bgimg from "../assets/Images/background.png";
 import bgimg1 from "../assets/Images/background_1.png";
+// import bgimg from "https://www.freepik.com/free-vector/realistic-neon-lights-background_13264408.htm#query=background%20gif&position=0&from_view=keyword&track=ais&uuid=bc1f5277-4d9b-49c9-988b-51ff57f6f924";
+// import bgimg1 from "https://www.freepik.com/free-vector/realistic-neon-lights-background_13264408.htm#query=background%20gif&position=0&from_view=keyword&track=ais&uuid=bc1f5277-4d9b-49c9-988b-51ff57f6f924";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Header from "../Components/Header";
+
 
   
 const OCR = ({ className }) => {
@@ -48,11 +51,6 @@ const OCR = ({ className }) => {
     setFile(null);
     setIsLoading(false);
   };
-
-  //OCR
-
-  // const [copiedtext, setCopiedText] = React.useState("");
-  // const [progress, setProgress] = React.useState(0);
 
   const handleSubmit = () => {
     setIsLoading(true);
@@ -141,7 +139,7 @@ const OCR = ({ className }) => {
               // Show the "Convert" button when not converting
               <button
                 className="m-5 group relative h-10 w-36 overflow-hidden rounded-3xl bg-white text-lg shadow bg-cover bg-center border-2 border-purple-400 "
-                style={{ backgroundImage: `url(${bgimg})` }}
+                style={{ backgroundImage: `url("${bgimg}")` }}
                 onClick={handleSubmit}
               >
                 <div class="absolute inset-0 w-0 bg-gradient-to-br from-teal-400 to-purple-600 transition-all duration-[500ms] ease-out group-hover:w-full"></div>

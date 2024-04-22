@@ -73,14 +73,14 @@ const Tubelight = () => {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
+          className="mt-8 animate-text bg-gradient-to-r from-teal-500 via-purple-500 to-orange-500 bg-clip-text font-extrabold py-4 text-center text-8xl tracking-tight text-transparent md:text-7xl"
         >
           NoteCraft
         </motion.h1>
       </div>
       <div className="flex justify-center items-center text-white">
-          <h1>Copyright @2023</h1>
-        </div>
+        <h1>Copyright @2023</h1>
+      </div>
     </div>
   );
 };

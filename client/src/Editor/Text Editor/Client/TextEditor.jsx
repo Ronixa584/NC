@@ -950,8 +950,10 @@ const CustomEditor = {
 };
 
 // Join a Liveblocks room and show the editor after connecting
-const App = ({ uid, id }) => {
+const App = ({ uid, id, isCE }) => {
   const [editorValue, setEditorValue] = useState(null);
+
+  console.log("IM here at App " + isCE);
 
   useEffect(() => {
     // Function to fetch data from Firestore and set it as the editor value
@@ -965,6 +967,26 @@ const App = ({ uid, id }) => {
           // If the document exists, extract the editor content and set it as the initial value
           // const content = docSnap.data().editorContent; // Assuming "editorContent" is the field where your editor data is stored
           const content = docSnap?.data()?.editorState; // Assuming "editorContent" is the field where your editor data is stored
+          console.log(content);
+          setEditorValue(content);
+        } else {
+          console.log("No such document!");
+        }
+
+        // setEditorValue(null);
+        // Fetch the document from Firestore
+        const docRef1 = doc(
+          firestore,
+          "userDocs",
+          "CollabEdit",
+          "docs",
+          `${id}`
+        );
+        const docSnap1 = await getDoc(docRef1);
+        if (docSnap.exists()) {
+          // If the document exists, extract the editor content and set it as the initial value
+          // const content = docSnap.data().editorContent; // Assuming "editorContent" is the field where your editor data is stored
+          const content = docSnap1?.data()?.editorState; // Assuming "editorContent" is the field where your editor data is stored
           console.log(content);
           setEditorValue(content);
         } else {
@@ -995,20 +1017,20 @@ const App = ({ uid, id }) => {
   return (
     <RoomProvider id={id} initialPresence={{ editorValue: editorValue }}>
       <ClientSideSuspense fallback={<div>Loading…</div>}>
-        {() => <CollaborativeEditor uid={uid} id={id} />}
+        {() => <CollaborativeEditor uid={uid} id={id} isCE={isCE} />}
       </ClientSideSuspense>
     </RoomProvider>
   );
 };
 
-const CollaborativeEditor = ({ uid, id }) => {
+const CollaborativeEditor = ({ uid, id, isCE }) => {
   const room = useRoom();
   const [connected, setConnected] = useState(false);
   const [sharedType, setSharedType] = useState();
   const [provider, setProvider] = useState();
   const [myPresence, updateMyPresence] = useMyPresence();
   const { user, setUser } = useContext(AuthContext);
-   const updateMyPresence1 = useUpdateMyPresence();
+  const updateMyPresence1 = useUpdateMyPresence();
 
   console.log(user.uid);
   console.log(user.displayName);
@@ -1029,8 +1051,6 @@ const CollaborativeEditor = ({ uid, id }) => {
 
     updateMyPresence({ x: 0 });
     updateMyPresence({ y: 0 });
-
-   
 
     updateMyPresence1({ y: 0 });
 
@@ -1057,11 +1077,12 @@ const CollaborativeEditor = ({ uid, id }) => {
       provider={provider}
       uid={user?.uid}
       id={id}
+      isCE={isCE}
     />
   );
 };
 
-const SlateEditor = ({ sharedType, provider, uid, id }) => {
+const SlateEditor = ({ sharedType, provider, uid, id, isCE }) => {
   const { user, setUser } = useContext(AuthContext);
   const [editorValue, setEditorValue] = useState(null);
 
@@ -1094,19 +1115,19 @@ const SlateEditor = ({ sharedType, provider, uid, id }) => {
     return e;
   }, []);
 
-    const renderElement = useCallback((props) => {
-      switch (props.element.type) {
-        case "code":
-          return <CodeElement {...props} />;
-        default:
-          return <DefaultElement {...props} />;
-      }
-    }, []);
-
-    const renderLeaf = useCallback((props) => {
-      return <Leaf {...props} />;
+  const renderElement = useCallback((props) => {
+    switch (props.element.type) {
+      case "code":
+        return <CodeElement {...props} />;
+      default:
+        return <DefaultElement {...props} />;
+    }
   }, []);
-  
+
+  const renderLeaf = useCallback((props) => {
+    return <Leaf {...props} />;
+  }, []);
+
   // const renderLeaf = (props) => {
   //   let style = {
   //     fontWeight: "normal",
@@ -1152,7 +1173,6 @@ const SlateEditor = ({ sharedType, provider, uid, id }) => {
   //   );
   // };
 
-
   useEffect(() => {
     YjsEditor.connect(editor);
     return () => YjsEditor.disconnect(editor);
@@ -1172,14 +1192,12 @@ const SlateEditor = ({ sharedType, provider, uid, id }) => {
   //   );
   // };
 
+  const [numPages, setNumPages] = useState(1);
 
-   const [numPages, setNumPages] = useState(1);
+  const addPage = () => {
+    setNumPages(numPages + 1);
+  };
 
-   const addPage = () => {
-     setNumPages(numPages + 1);
-   };
-
-  
   return (
     <Slate
       editor={editor}
@@ -1203,13 +1221,38 @@ const SlateEditor = ({ sharedType, provider, uid, id }) => {
         const isAstChange = editor.operations.some(
           (op) => "set_selection" !== op.type
         );
-        if (isAstChange) {
-          // Convert the value to a format suitable for Firestore (e.g., JSON)
-          const content = JSON.stringify(value);
 
-          // Update the Firestore document with the new editor value
-          const docRef = doc(firestore, "userDocs", `${uid}`, "docs", `${id}`);
-          setDoc(docRef, { editorValue: content }, { merge: true });
+        console.log("IM here" + isCE);
+        if (isCE) {
+          if (isAstChange) {
+            // Convert the value to a format suitable for Firestore (e.g., JSON)
+            const content = JSON.stringify(value);
+
+            // Update the Firestore document with the new editor value
+            const docRef = doc(
+              firestore,
+              "userDocs",
+              "CollabEdit",
+              "docs",
+              `${id}`
+            );
+            setDoc(docRef, { editorValue: content }, { merge: true });
+          }
+        } else {
+          if (isAstChange) {
+            // Convert the value to a format suitable for Firestore (e.g., JSON)
+            const content = JSON.stringify(value);
+
+            // Update the Firestore document with the new editor value
+            const docRef = doc(
+              firestore,
+              "userDocs",
+              `${uid}`,
+              "docs",
+              `${id}`
+            );
+            setDoc(docRef, { editorValue: content }, { merge: true });
+          }
         }
       }}
     >
@@ -1303,19 +1346,19 @@ const SlateEditor = ({ sharedType, provider, uid, id }) => {
                   return;
                 }
 
-                switch (event.key) {
-                  case "`": {
-                    event.preventDefault();
-                    CustomEditor.toggleCodeBlock(editor);
-                    break;
-                  }
+                // switch (event.key) {
+                //   case "`": {
+                //     event.preventDefault();
+                //     CustomEditor.toggleCodeBlock(editor);
+                //     break;
+                //   }
 
-                  case "b": {
-                    event.preventDefault();
-                    CustomEditor.toggleBoldMark(editor);
-                    break;
-                  }
-                }
+                //   case "b": {
+                //     event.preventDefault();
+                //     CustomEditor.toggleBoldMark(editor);
+                //     break;
+                //   }
+                // }
               }}
             />
           </fun>

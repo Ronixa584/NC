@@ -7,7 +7,10 @@ import dashboard from "../assets/Images/dashboardimg.png";
 import Cards from "./Cards";
 import Team from "./Team";
 import Tubelight from "./Tubelight";
-import Background from "./Background.mp4";
+// import Background from "./Background.mp4";
+import Background from "../assets/Videos/V1.mp4"
+import TypeAnimationSequence from "./TypeAnimationSequence";
+
 
 const Section1 = () => {
   const texts = [
@@ -35,9 +38,11 @@ const Section1 = () => {
     >
       <div className="h-auto w-full md:flex">
         <div className="md:w-1/2 p-4 pb-0">
-          <div className="text-center mt-20 md:mt-20 lg:mt-32">
-            <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl  text-transparent bg-clip-text bg-gradient-to-br from-teal-400 to-pink-600 transition-all duration-[500ms] ease-out">
-              {texts[textIndex]}
+          <div className="text-center mt-20 md:mt-20 lg:mt-32 mb-10">
+            {/* <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl  text-transparent bg-clip-text bg-gradient-to-br from-teal-400 to-pink-600 transition-all duration-[500ms] ease-out"> */}
+            {/* {texts[textIndex]} */}
+            <h1 className="animate-text bg-gradient-to-r from-teal-500 via-purple-500 to-orange-500 bg-clip-text text-transparent text-5xl font-bold ">
+              <TypeAnimationSequence></TypeAnimationSequence>
             </h1>
           </div>
           <div className="text-justify mt-8">
@@ -68,24 +73,24 @@ const Section1 = () => {
 };
 
 const Section2 = () => {
-  return (
-    <div
-      className="min-h-screen h-auto lg:h-screen xl:h-screen 2xl:h-screen w-full bg-cover bg-center"
-      // className="h-auto lg:h-screen xl:h-screen 2xl:h-screenw-auto  bg-cover bg-center"
-      style={{ backgroundImage: `url(${bgimg1})` }}
-    >
-      <h1>Section 2</h1>
-    </div>
-  );
   // return (
-  // <div
-  //   className="min-h-screen h-auto lg:h-screen xl:h-screen 2xl:h-screen w-full bg-cover bg-center"
-  // >
-  //   <video autoPlay loop >
-  //     <source src={Background} type="video/mp4"></source>
-  //   </video>
-  // </div>
+  //   <div
+  //     className="min-h-screen h-auto lg:h-screen xl:h-screen 2xl:h-screen w-full bg-cover bg-center"
+  //     // className="h-auto lg:h-screen xl:h-screen 2xl:h-screenw-auto  bg-cover bg-center"
+  //     style={{ backgroundImage: `url(${bgimg1})` }}
+  //   >
+  //     <h1>Section 2</h1>
+  //   </div>
   // );
+  return (
+  <div
+    className="min-h-screen h-auto lg:h-screen xl:h-screen 2xl:h-screen w-full bg-cover bg-center"
+  >
+    <video autoPlay loop >
+      <source src={Background} type="video/mp4"></source>
+    </video>
+  </div>
+  );
 };
 const Section3 = () => {
   return (
